@@ -55,7 +55,7 @@ func (g *GCPBucket) UploadToBucket(bucketName, destObjectName string, jsonObject
 	return nil
 }
 
-func (g *GCPBucket) UploadToBQ(projId, datasetName, tableName string) error {
+func (g *GCPBucket) UploadToBigQuery(projId, datasetName, tableName string) error {
 	ctx := context.Background()
 
 	client, err := bigquery.NewClient(ctx, projId)
