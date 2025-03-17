@@ -5,7 +5,6 @@ import (
 
 	"context"
 	"encoding/json"
-	"log"
 
 	"cloud.google.com/go/bigquery"
 	"cloud.google.com/go/storage"
