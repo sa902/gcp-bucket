@@ -21,10 +21,10 @@ type User struct {
 }
 
 type GCPBucket struct {
+	TestString string
 }
 
 func (g *GCPBucket) UploadToBucket(bucketName, destObjectName string, jsonObject interface{}) error {
-	// Create context
 	ctx := context.Background()
 
 	client, err := storage.NewClient(ctx)
@@ -54,7 +54,20 @@ func (g *GCPBucket) UploadToBucket(bucketName, destObjectName string, jsonObject
 	return nil
 }
 
-func (g *GCPBucket) UploadToBigQuery(projId, datasetName, tableName string) error {
+func (g *GCPBucket) Test(s string) {
+	g.TestString = s
+
+}
+
+type Row struct {
+	Duration   float64 `json:"duration"`
+	Sending    float64 `json:"sending"`
+	Waiting    float64 `json:"waiting"`
+	Receiving  float64 `json:"receiving"`
+	Parameters string  `json:"parameters"`
+}
+
+func (g *GCPBucket) UploadToBigQuery(projId, datasetName, tableName, data string) error {
 	ctx := context.Background()
 
 	client, err := bigquery.NewClient(ctx, projId)
@@ -63,18 +76,20 @@ func (g *GCPBucket) UploadToBigQuery(projId, datasetName, tableName string) erro
 	}
 	defer client.Close()
 
-	users := []*User{
-		{Name: "Alice", Age: 30, Email: "alice@example.com"},
-		// {Name: "Bob", Age: 35, Email: "bob@example.com", SignupAt: time.Now()},
+	var row Row
+
+	err = json.Unmarshal([]byte(data), &row)
+	if err != nil {
+		return err
 	}
 
 	table := client.Dataset(datasetName).Table(tableName)
 
 	inserter := table.Inserter()
-	inserter.SkipInvalidRows = true     // Optional: skip bad rows
-	inserter.IgnoreUnknownValues = true // Optional: ignore unknown fields
+	inserter.SkipInvalidRows = true
+	inserter.IgnoreUnknownValues = true
 
-	if err := inserter.Put(ctx, users); err != nil {
+	if err := inserter.Put(ctx, row); err != nil {
 		return err
 	}
 	return nil
