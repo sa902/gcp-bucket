@@ -60,11 +60,12 @@ func (g *GCPBucket) Test(s string) {
 }
 
 type Row struct {
-	Duration   float64 `json:"duration"`
-	Sending    float64 `json:"sending"`
-	Waiting    float64 `json:"waiting"`
-	Receiving  float64 `json:"receiving"`
-	Parameters string  `json:"parameters"`
+	Duration    float64 `json:"duration"`
+	Sending     float64 `json:"sending"`
+	Waiting     float64 `json:"waiting"`
+	Receiving   float64 `json:"receiving"`
+	Parameters  string  `json:"parameters"`
+	IterationID string  `json:"iteration_id"`
 }
 
 func (g *GCPBucket) UploadToBigQuery(projId, datasetName, tableName, data string) error {
