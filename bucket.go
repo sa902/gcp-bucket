@@ -2,6 +2,7 @@ package gcpbucket
 
 import (
 	"go.k6.io/k6/js/modules"
+	"log"
 
 	"context"
 	"encoding/json"
@@ -60,16 +61,17 @@ func (g *GCPBucket) Test(s string) {
 }
 
 type Row struct {
-	Duration    float64 `json:"duration"`
-	Sending     float64 `json:"sending"`
-	Waiting     float64 `json:"waiting"`
-	Receiving   float64 `json:"receiving"`
-	Parameters  string  `json:"parameters"`
-	IterationID string  `json:"iteration_id"`
+	Duration   float64 `json:"duration"`
+	Sending    float64 `json:"sending"`
+	Waiting    float64 `json:"waiting"`
+	Receiving  float64 `json:"receiving"`
+	Parameters string  `json:"parameters"`
+	Iteration  string  `json:"iteration"`
 }
 
 func (g *GCPBucket) UploadToBigQuery(projId, datasetName, tableName, data string) error {
 	ctx := context.Background()
+	l := log.Default()
 
 	client, err := bigquery.NewClient(ctx, projId)
 	if err != nil {
@@ -84,6 +86,7 @@ func (g *GCPBucket) UploadToBigQuery(projId, datasetName, tableName, data string
 		return err
 	}
 
+	l.Printf("this is the row %v and this is the passed in %v", row.Iteration, string(data))
 	table := client.Dataset(datasetName).Table(tableName)
 
 	inserter := table.Inserter()
