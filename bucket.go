@@ -67,6 +67,7 @@ type Row struct {
 	Receiving  float64 `json:"receiving"`
 	Parameters string  `json:"parameters"`
 	Iteration  string  `json:"iteration"`
+	Inserted   string  `json:"inserted" bigquery:"inserted_at"`
 }
 
 func (g *GCPBucket) UploadToBigQuery(projId, datasetName, tableName, data string) error {
